@@ -1,0 +1,172 @@
+﻿attach(Preprocessed_Data)
+
+
+add1(lm(isHomeWin~1),isHomeWin~isPlayoff+date+away_goals+home_goals+time_zone+
+           away_shots+home_shots+away_hits+home_hits+away_pim+
+           home_pim+away_power_play_opp+home_power_play_opp+
+           away_power_play_goals+home_power_play_goals+
+           away_faceoff_win_percent+home_faceoff_win_percent+
+           away_giveaways+home_giveaways+away_takeaways+
+           home_takeaways,test="F")
+
+
+add1(lm(isHomeWin~away_goals),isHomeWin~isPlayoff+date+away_goals+home_goals+time_zone+
+           away_shots+home_shots+away_hits+home_hits+away_pim+
+           home_pim+away_power_play_opp+home_power_play_opp+
+           away_power_play_goals+home_power_play_goals+
+           away_faceoff_win_percent+home_faceoff_win_percent+
+           away_giveaways+home_giveaways+away_takeaways+
+           home_takeaways,test="F")
+
+
+add1(lm(isHomeWin~away_goals+home_goals),isHomeWin~isPlayoff+date+away_goals+home_goals+time_zone+
+       away_shots+home_shots+away_hits+home_hits+away_pim+
+       home_pim+away_power_play_opp+home_power_play_opp+
+       away_power_play_goals+home_power_play_goals+
+       away_faceoff_win_percent+home_faceoff_win_percent+
+       away_giveaways+home_giveaways+away_takeaways+
+       home_takeaways,test="F")
+
+
+add1(lm(isHomeWin~away_goals+home_goals+away_shots),isHomeWin~isPlayoff+date+away_goals+home_goals+time_zone+
+       away_shots+home_shots+away_hits+home_hits+away_pim+
+       home_pim+away_power_play_opp+home_power_play_opp+
+       away_power_play_goals+home_power_play_goals+
+       away_faceoff_win_percent+home_faceoff_win_percent+
+       away_giveaways+home_giveaways+away_takeaways+
+       home_takeaways,test="F")
+add1(lm(isHomeWin~away_goals+home_goals+away_shots+home_hits),isHomeWin~isPlayoff+date+away_goals+home_goals+time_zone+
+       away_shots+home_shots+away_hits+home_hits+away_pim+
+       home_pim+away_power_play_opp+home_power_play_opp+
+       away_power_play_goals+home_power_play_goals+
+       away_faceoff_win_percent+home_faceoff_win_percent+
+       away_giveaways+home_giveaways+away_takeaways+
+       home_takeaways,test="F")
+
+
+#Best Fit Model
+train<-glm(isHomeWin~ away_goals+home_goals+away_shots+home_hits, family = binomial(link = "logit"), data = Training)
+
+
+
+
+predicted<-predict(train, Error, type="response")
+
+
+library(InformationValue)
+optCutOff <- optimalCutoff(Error$isHomeWin, predicted)[1]
+optCutOff
+summary(train)
+library(VIF)
+vif(train)
+misClassError(Error$isHomeWin, predicted, threshold = optCutOff)
+
+
+plotROC(Error$isHomeWin, predicted)
+
+
+
+
+
+
+bestfit=glm(isHomeWin~away_goals+home_goals+away_shots+home_hits, family = binomial)
+
+
+anova(bestfit, test="Chisq")
+
+
+plot(predict(bestfit), residuals(bestfit))
+abline(h=0, lty=2, col='grey')
+
+
+
+
+
+
+fitted.results <- predict(bestfit,newdata=subset(Error,select=c(10,11,13,16)),type='response')
+fitted.results <- ifelse(fitted.results > 0.5,1,0)
+
+
+misClasificError <- mean(fitted.results != test$Survived)
+print(paste('Accuracy',1-misClasificError))
+
+
+
+
+
+
+
+
+
+
+
+
+#definitely some errors with normal qq and Residuals....
+bestfit1=lm(isHomeWin~home_goals+away_shots+home_hits)
+plot(bestfit1)
+
+
+bestfit2=lm(isHomeWin~away_goals+away_shots+home_hits)
+plot(bestfit2)
+
+
+bestfit3=lm(isHomeWin~away_goals+home_goals+home_hits)
+plot(bestfit3)
+
+
+bestfit4=lm(isHomeWin~away_goals+home_goals+away_shots)
+plot(bestfit4)
+
+
+#isAWayWin
+
+
+
+
+#home goals
+add1(lm(home_goals~1),home_goals~isPlayoff+date+home_goals+time_zone+
+       away_shots+home_shots+away_hits+home_hits+away_pim+
+       home_pim+away_power_play_opp+home_power_play_opp+
+       away_faceoff_win_percent+home_faceoff_win_percent+
+       away_giveaways+home_giveaways+away_takeaways+
+       home_takeaways,test="F")
+
+
+add1(lm(home_goals~away_pim),home_goals~isPlayoff+date+home_goals+time_zone+
+       away_shots+home_shots+away_hits+home_hits+away_pim+
+       home_pim+away_power_play_opp+home_power_play_opp+
+       away_faceoff_win_percent+home_faceoff_win_percent+
+       away_giveaways+home_giveaways+away_takeaways+
+       home_takeaways,test="F")
+
+
+add1(lm(home_goals~away_pim+home_hits),home_goals~isPlayoff+date+home_goals+time_zone+
+       away_shots+home_shots+away_hits+home_hits+away_pim+
+       home_pim+away_power_play_opp+home_power_play_opp+
+       away_faceoff_win_percent+home_faceoff_win_percent+
+       away_giveaways+home_giveaways+away_takeaways+
+       home_takeaways,test="F")
+
+
+add1(lm(home_goals~away_pim+home_hits+home_shots),home_goals~isPlayoff+date+home_goals+time_zone+
+       away_shots+home_shots+away_hits+home_hits+away_pim+
+       home_pim+away_power_play_opp+home_power_play_opp+
+       away_faceoff_win_percent+home_faceoff_win_percent+
+       away_giveaways+home_giveaways+away_takeaways+
+       home_takeaways,test="F")
+
+
+add1(lm(home_goals~away_pim+home_hits+home_shots+away_shots),home_goals~isPlayoff+date+home_goals+time_zone+
+       away_shots+home_shots+away_hits+home_hits+away_pim+
+       home_pim+away_power_play_opp+home_power_play_opp+
+       away_faceoff_win_percent+home_faceoff_win_percent+
+       away_giveaways+home_giveaways+away_takeaways+
+       home_takeaways,test="F")
+
+
+add1(lm(home_goals~away_pim+home_hits+home_shots+away_shots+away_hits),home_goals~isPlayoff+date+home_goals+time_zone+
+       away_shots+home_shots+away_hits+home_hits+away_pim+
+       home_pim+away_power_play_opp+home_power_play_opp+
+       away_faceoff_win_percent+home_faceoff_win_percent+
+       away_giveaways+home_giveaways+away_takeaways+
+       home_takeaways,test="F")
